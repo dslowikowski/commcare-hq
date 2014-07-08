@@ -185,18 +185,18 @@ class PatientInfoReport(PatientDetailsReport):
         #  check user role:
         user = self.request.couch_user
         if is_pm_or_pi(user):
-            ret['edit_patient_info_url'] = self.get_form_url(self.pm_app_dict, self.latest_pm_build, PM_APP_PM_MODULE, PM_PM2, ret['patient']['_id'])
+            ret['edit_patient_info_url'] = get_form_url(self.pm_app_dict, self.domain, self.latest_pm_build, PM_APP_PM_MODULE, PM_PM2, ret['patient']['_id'])
         elif is_cm(user):
-            ret['edit_patient_info_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_PD_MODULE, PM_PM2, ret['patient']['_id'])
+            ret['edit_patient_info_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_PD_MODULE, PM_PM2, ret['patient']['_id'])
         elif is_chw(user):
-            ret['edit_patient_info_url'] = self.get_form_url(self.chw_app_dict, self.latest_chw_build, CHW_APP_PD_MODULE, PM2, ret['patient']['_id'])
+            ret['edit_patient_info_url'] = get_form_url(self.chw_app_dict, self.domain, self.latest_chw_build, CHW_APP_PD_MODULE, PM2, ret['patient']['_id'])
 
         if is_pm_or_pi(user):
-            ret['upcoming_appointments_url'] = self.get_form_url(self.pm_app_dict, self.latest_pm_build, PM_APP_PM_MODULE, PM_PM2, ret['patient']['_id'])
+            ret['upcoming_appointments_url'] = get_form_url(self.pm_app_dict, self.domain, self.latest_pm_build, PM_APP_PM_MODULE, PM_PM2, ret['patient']['_id'])
         elif is_cm(user):
-            ret['upcoming_appointments_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_PD_MODULE, PM_PM2, ret['patient']['_id'])
+            ret['upcoming_appointments_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_PD_MODULE, PM_PM2, ret['patient']['_id'])
         elif is_chw(user):
-            ret['upcoming_appointments_url'] = self.get_form_url(self.chw_app_dict, self.latest_chw_build, CHW_APP_MA_MODULE, AP2, ret['patient']['_id'])
+            ret['upcoming_appointments_url'] = get_form_url(self.chw_app_dict, self.domain, self.latest_chw_build, CHW_APP_MA_MODULE, AP2, ret['patient']['_id'])
 
         ret['general_information'] = patient_info.general_information
         ret['contact_information'] = patient_info.contact_information

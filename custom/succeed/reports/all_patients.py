@@ -48,15 +48,9 @@ class PatientListReportDisplay(CaseDisplay):
         self.latest_build = get_app_build(self.app_dict)
         super(PatientListReportDisplay, self).__init__(report, case_dict)
 
-    def get_property(self, key):
-        if key in self.case:
-            return self.case[key]
-        else:
-            return EMPTY_FIELD
-
     @property
     def case_name(self):
-        return self.get_property("full_name")
+        return self.case.get("full_name", EMPTY_FIELD)
 
     @property
     def case_link(self):
@@ -85,11 +79,11 @@ class PatientListReportDisplay(CaseDisplay):
 
     @property
     def mrn(self):
-        return self.get_property("mrn")
+        return self.case.get("mrn", EMPTY_FIELD)
 
     @property
     def randomization_date(self):
-        rand_date = self.get_property("randomization_date")
+        rand_date = self.case.get("randomization_date", EMPTY_FIELD)
         if rand_date != EMPTY_FIELD:
             date = datetime.strptime(rand_date, INPUT_DATE_FORMAT)
             return date.strftime(OUTPUT_DATE_FORMAT)
@@ -124,11 +118,11 @@ class PatientListReportDisplay(CaseDisplay):
 
     @property
     def most_recent(self):
-        return self.get_property("BP_category")
+        return self.case.get("BP_category", EMPTY_FIELD)
 
     @property
     def discuss(self):
-        return self.get_property("discuss")
+        return self.case.get("discuss", EMPTY_FIELD)
 
     @property
     def patient_info(self):

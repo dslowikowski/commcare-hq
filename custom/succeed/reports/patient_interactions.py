@@ -5,7 +5,7 @@ from corehq.apps.users.models import CouchUser
 from custom.succeed.reports import *
 from custom.succeed.reports.patient_details import PatientDetailsReport
 from dimagi.utils.decorators.memoized import memoized
-from custom.succeed.utils import format_date
+from custom.succeed.utils import format_date, get_form_url
 
 
 class PatientInteractionsReport(PatientDetailsReport):
@@ -17,19 +17,19 @@ class PatientInteractionsReport(PatientDetailsReport):
         self.report_template_path = "patient_interactions.html"
         ret = super(PatientInteractionsReport, self).report_context
         ret['view_mode'] = 'interactions'
-        ret['problem_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_PD_MODULE, PD1, ret['patient']['_id'])
-        ret['huddle_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_HUD_MODULE, HUD2, ret['patient']['_id'])
-        ret['cm_phone_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_CM_MODULE, CM6, ret['patient']['_id'])
-        ret['chw_phone_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_CHW_MODULE, CHW3, ret['patient']['_id'])
-        ret['cm_visits_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_APPOINTMENTS_MODULE, AP2, ret['patient']['_id'])
+        ret['problem_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_PD_MODULE, PD1, ret['patient']['_id'])
+        ret['huddle_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_HUD_MODULE, HUD2, ret['patient']['_id'])
+        ret['cm_phone_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_CM_MODULE, CM6, ret['patient']['_id'])
+        ret['chw_phone_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_CHW_MODULE, CHW3, ret['patient']['_id'])
+        ret['cm_visits_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_APPOINTMENTS_MODULE, AP2, ret['patient']['_id'])
 
-        ret['anti_thrombotic_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2AM, ret['patient']['_id'])
-        ret['blood_pressure_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2BPM, ret['patient']['_id'])
-        ret['cholesterol_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2CHM, ret['patient']['_id'])
-        ret['depression_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2DIABM, ret['patient']['_id'])
-        ret['diabetes_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2DEPM, ret['patient']['_id'])
-        ret['smoking_cessation_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2SCM, ret['patient']['_id'])
-        ret['other_meds_url'] = self.get_form_url(self.cm_app_dict, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2OM, ret['patient']['_id'])
+        ret['anti_thrombotic_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2AM, ret['patient']['_id'])
+        ret['blood_pressure_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2BPM, ret['patient']['_id'])
+        ret['cholesterol_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2CHM, ret['patient']['_id'])
+        ret['depression_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2DIABM, ret['patient']['_id'])
+        ret['diabetes_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2DEPM, ret['patient']['_id'])
+        ret['smoking_cessation_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2SCM, ret['patient']['_id'])
+        ret['other_meds_url'] = get_form_url(self.cm_app_dict, self.domain, self.latest_cm_build, CM_APP_MEDICATIONS_MODULE, PD2OM, ret['patient']['_id'])
 
         ret['interaction_table'] = []
         for visit_key, visit in enumerate(VISIT_SCHEDULE):

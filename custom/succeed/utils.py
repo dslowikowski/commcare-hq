@@ -1,6 +1,8 @@
+from django.utils import html
 from django.utils.translation import ugettext as _, ugettext_noop
 import dateutil
 from corehq.apps.app_manager.models import ApplicationBase
+from corehq.apps.cloudcare.api import get_cloudcare_form_url
 from corehq.apps.domain.models import Domain
 from casexml.apps.case.models import CommCareCase
 from datetime import datetime, timedelta
@@ -106,3 +108,16 @@ def update_patient_target_dates(case):
             tg_date = rand_date.date() + timedelta(days=next_visit['days'])
             case.set_case_property(visit['target_date_case_property'], tg_date.strftime("%m/%d/%Y"))
     case.save()
+
+def get_form_url(app_dict, domain, app_build_id, module_idx, form, case_id=None):
+        try:
+            module = app_dict['modules'][module_idx]
+            form_idx = [ix for (ix, f) in enumerate(module['forms']) if f['xmlns'] == form][0]
+        except IndexError:
+            form_idx = None
+
+        return html.escape(get_cloudcare_form_url(domain=domain,
+                                                  app_build_id=app_build_id,
+                                                  module_id=module_idx,
+                                                  form_id=form_idx,
+                                                  case_id=case_id) + '/enter/')
