@@ -33,7 +33,14 @@ class PatientTaskListReportDisplay(CaseDisplay):
         self.latest_build = get_app_build(self.app_dict)
         super(PatientTaskListReportDisplay, self).__init__(report, case_dict)
 
+    def get_link(self, url, field):
+        if url:
+            return html.mark_safe("<a class='ajax_dialog' href='%s' target='_blank'>%s</a>" % (url, html.escape(field)))
+        else:
+            return "%s (bad ID format)" % field
+
     @property
+    @memoized
     def full_name(self):
         indices = self.case.get("indices", EMPTY_FIELD)
 
@@ -49,11 +56,7 @@ class PatientTaskListReportDisplay(CaseDisplay):
 
     @property
     def full_name_link(self):
-        url = self.full_name_url
-        if url:
-            return html.mark_safe("<a class='ajax_dialog' href='%s' target='_blank'>%s</a>" % (url, html.escape(self.full_name)))
-        else:
-            return "%s (bad ID format)" % self.case["indices"][0]["referenced_id"]
+        return self.get_link(self.full_name_url, self.full_name)
 
     @property
     def name(self):
@@ -70,11 +73,7 @@ class PatientTaskListReportDisplay(CaseDisplay):
 
     @property
     def name_link(self):
-        url = self.name_url
-        if url:
-            return html.mark_safe("<a class='ajax_dialog' href='%s' target='_blank'>%s</a>" % (url, html.escape(self.name)))
-        else:
-            return "%s (bad ID format)" % self.name
+        return self.get_link(self.name_url, self.name)
 
     @property
     def task_responsible(self):
