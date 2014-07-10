@@ -1,0 +1,12 @@
+{
+    "id": 1,
+    "name": "Melania Nkaka",
+    "role": "ic",
+    "is_active": true,
+    "supply_point": 79,
+    "email": "nkaka@gmail.com",
+    "phone_numbers": [
+        "4224242442"
+    ],
+    "backend": "push_backend"
+}
