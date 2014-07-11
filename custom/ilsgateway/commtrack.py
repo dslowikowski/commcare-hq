@@ -52,13 +52,13 @@ def sync_ilsgateway_webusers(domain, ilsgateway_webuser):
         try:
             user = WebUser.create(domain=None, username=ilsgateway_webuser.email.lower(),
                                   password=ilsgateway_webuser.password, email=ilsgateway_webuser.email, **user_dict)
-            user.add_domain_membership(domain.name, role_id=role_id)
+            user.add_domain_membership(domain, role_id=role_id)
             user.save()
         except Exception as e:
             logging.error(e)
     else:
-        if domain.name not in user.get_domains():
-            user.add_domain_membership(domain.name, role_id=role_id)
+        if domain not in user.get_domains():
+            user.add_domain_membership(domain, role_id=role_id)
             user.save()
 
     return user
@@ -66,7 +66,7 @@ def sync_ilsgateway_webusers(domain, ilsgateway_webuser):
 
 def sync_ilsgateway_smsusers(domain, ilsgateway_smsuser):
     username_part = "%s%d" % (ilsgateway_smsuser.name.strip().replace(' ', '.').lower(), ilsgateway_smsuser.id)
-    username = "%s@%s.commcarehq.org" % (username_part, domain.name)
+    username = "%s@%s.commcarehq.org" % (username_part, domain)
     user = CouchUser.get_by_username(username)
     splitted_value = ilsgateway_smsuser.name.split(' ', 1)
     first_name = last_name = ''
@@ -91,7 +91,7 @@ def sync_ilsgateway_smsusers(domain, ilsgateway_smsuser):
     if user is None and username_part:
         try:
             password = User.objects.make_random_password()
-            user = CommCareUser.create(domain=domain.name, username=username, password=password,
+            user = CommCareUser.create(domain=domain, username=username, password=password,
                                        email=ilsgateway_smsuser.email, commit=False)
             user.first_name = first_name
             user.last_name = last_name
@@ -131,14 +131,15 @@ def smsusers_sync(project, endpoint):
         else:
             next_url = meta['next']
 
+
 def bootstrap_domain(domain):
     project = Domain.get_by_name(domain)
     start_date = datetime.today()
     endpoint = ILSGatewayEndpoint.from_config(project.commtrack_settings.ilsgateway_config, project.name)
     try:
-        products_sync(project, endpoint)
-        webusers_sync(project, endpoint)
-        smsusers_sync(project, endpoint)
+        products_sync(project.name, endpoint)
+        webusers_sync(project.name, endpoint)
+        smsusers_sync(project.name, endpoint)
         try:
             checkpoint = MigrationCheckpoint.objects.get(domain=project.name)
             checkpoint.date = start_date
