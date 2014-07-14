@@ -2,6 +2,7 @@ import logging
 import requests
 import simplejson
 from custom.api.utils import EndpointMixin
+from custom.ilsgateway.models import MigrationCheckpoint
 
 
 class Product(object):
@@ -86,14 +87,14 @@ class SMSUser(object):
 
 class ILSGatewayEndpoint(EndpointMixin):
 
-    def __init__(self, base_uri, username, password):
+    def __init__(self, base_uri, username, password, domain):
         self.base_uri = base_uri.rstrip('/')
+        self.domain = domain
         self.username = username
         self.password = password
         self.products_url = self._urlcombine(self.base_uri, '/products/')
         self.webusers_url = self._urlcombine(self.base_uri, '/webusers/')
         self.smsusers_url = self._urlcombine(self.base_uri, '/smsusers/')
-        self.checkpoint_url = self._urlcombine(self.base_uri, '/checkpoint/')
 
     def get_objects(self, url, params=None):
         params = params if params else {}
@@ -106,29 +107,24 @@ class ILSGatewayEndpoint(EndpointMixin):
             objects = response.json()['objects']
         return meta, objects
 
-    def get_products(self):
+    def get_products(self, **kwargs):
         meta, products = self.get_objects(self.products_url)
         for product in products:
             yield Product.from_json(product)
 
-    def get_webusers(self):
+    def get_webusers(self, **kwargs):
         meta, users = self.get_objects(self.webusers_url)
         for user in users:
             yield ILSUser.from_json(user)
 
-    def get_smsusers(self, domain, next_url_params=None):
+    def get_smsusers(self, next_url_params=None, **kwargs):
         params = {}
         if not next_url_params:
             url = self.smsusers_url
-            params = {'domain': domain, 'limit': 500}
+            params = {'limit': 500}
         else:
             url = self.smsusers_url + "?" + next_url_params
 
         meta, users = self.get_objects(url, params=params)
         return meta, [SMSUser.from_json(user) for user in users]
-
-    def confirm_migration(self, id, domain, api):
-        url = self._urlcombine(self.checkpoint_url, '%s/' % domain)
-        data = {'id': id, 'api': api}
-        requests.put(url, data=simplejson.dumps(data), auth=self._auth(), headers={"Content-Type": "application/json"})
 

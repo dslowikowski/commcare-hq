@@ -14,8 +14,8 @@ def apply_updates(doc, update_dict):
 
 class EndpointMixin(object):
     @classmethod
-    def from_config(cls, config):
-        return cls(config.url, config.username, config.password)
+    def from_config(cls, config, domain):
+        return cls(config.url, config.username, config.password, domain)
 
     def _auth(self):
         return HTTPBasicAuth(self.username, self.password)
