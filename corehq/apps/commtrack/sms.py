@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.dispatch.dispatcher import Signal
 from corehq.apps.commtrack.const import RequisitionActions
 from corehq.apps.domain.models import Domain
 from corehq.apps.commtrack import const
@@ -21,6 +22,7 @@ from corehq.apps.commtrack.exceptions import NotAUserClassError
 
 import uuid
 
+signal = Signal(providing_args=['verivied_contact', 'domain', 'text', 'msg'])
 logger = logging.getLogger('commtrack.sms')
 
 class SMSError(RuntimeError):
@@ -29,6 +31,7 @@ class SMSError(RuntimeError):
 def handle(verified_contact, text, msg=None):
     """top-level handler for incoming stock report messages"""
     domain = Domain.get_by_name(verified_contact.domain)
+    signal.send(verified_contact=verified_contact, sender="commtrack_sms", domain=domain.name, text=text, msg=msg)
     if not domain.commtrack_enabled:
         return False
 
@@ -41,7 +44,7 @@ def handle(verified_contact, text, msg=None):
     except Exception, e: # todo: should we only trap SMSErrors?
         if settings.UNIT_TESTING or settings.DEBUG:
             raise
-        send_sms_to_verified_number(verified_contact, 'problem with stock report: %s' % str(e))
+        #send_sms_to_verified_number(verified_contact, 'problem with stock report: %s' % str(e))
         return True
 
     process(domain.name, data)
