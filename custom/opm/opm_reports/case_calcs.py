@@ -346,3 +346,14 @@ class ChildSpacing(fluff.Calculator):
                         account_number_from_form(form),
                     ]
                 }
+
+class VhndAvailabilityCalc(fluff.Calculator):
+
+    @fluff.date_emitter
+    def availability(self, case):
+        for form in case.get_forms():
+            if form.xmlns == VHND_XMLNS:
+                yield {
+                    'date': form.received_on,
+                    'value': 1
+                }

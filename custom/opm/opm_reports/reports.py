@@ -16,7 +16,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_noop
 import simplejson
 from sqlagg.base import AliasColumn
-from sqlagg.columns import SimpleColumn, SumColumn
+from sqlagg.columns import SimpleColumn, SumColumn, CountColumn
 from corehq.apps.reports.cache import request_cache
 from django.http import HttpResponse
 from corehq.apps.reports.datatables import DataTablesHeader, DataTablesColumn
@@ -159,6 +159,42 @@ class OpmFormSqlData(SqlData):
             return super(OpmFormSqlData, self).data[self.case_id]
         else:
             return None
+
+
+class VhndAvailabilitySqlData(SqlData):
+
+    table_name = "fluff_OpmFormFluff"
+
+    def __init__(self, domain, datespan):
+        self.domain = domain
+        self.datespan = datespan
+
+    @property
+    def filter_values(self):
+        return dict(
+            domain=self.domain,
+            startdate=self.datespan.startdate_utc.date(),
+            enddate=self.datespan.enddate_utc.date()
+        )
+
+    @property
+    def group_by(self):
+        return ['owner_id']
+
+    @property
+    def filters(self):
+        filters = [
+            "domain = :domain",
+            "date between :startdate and :enddate"
+        ]
+        return filters
+
+    @property
+    def columns(self):
+        return [
+            DatabaseColumn("", CountColumn("vhnd_availability")),
+        ]
+
 
 class OpmHealthStatusSqlData(SqlData):
 

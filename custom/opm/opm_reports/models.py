@@ -1,8 +1,10 @@
 """
 Fluff IndicatorDocument definitions for the OPM reports.
 """
+from fluff.filters import EQFilter
 from corehq.apps.users.models import CommCareUser, CommCareCase
 from couchforms.models import XFormInstance
+from custom.opm.opm_reports.case_calcs import VhndAvailabilityCalc
 from custom.opm.opm_reports.constants import CFU1_XMLNS
 import fluff
 
@@ -166,6 +168,18 @@ class OPMHierarchyFluff(fluff.IndicatorDocument):
     block = user_data('block')
     gp = user_data('gp')
     awc = user_data('awc')
+
+class VhndAvailabilityFluff(fluff.IndicatorDocument):
+
+    document_class = CommCareCase
+    domains = ('opm',)
+    group_by = ('domain',)
+    save_direct_to_sql = True
+    document_filter = EQFilter('type', 'vhnd')
+
+    owner_id = flat_field(lambda c: c.owenr_id)
+    vhnd = VhndAvailabilityCalc()
+
 
 # These Pillows need to be added to the list of PILLOWTOPS in settings.py
 OpmCaseFluffPillow = OpmCaseFluff.pillow()
