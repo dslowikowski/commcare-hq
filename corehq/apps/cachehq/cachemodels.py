@@ -109,11 +109,3 @@ class LocationGenerationCache(GenerationCache):
         'commtrack/locations_by_code',
         '_all_docs',
     ]
-
-
-class DomainInvitationGenerationCache(GenerationCache):
-    generation_key = '#gen#invitation#'
-    doc_types = ['Invitation']
-    views = [
-        'users/open_invitations_by_email',
-    ]

@@ -52,11 +52,7 @@
             valueDefault: property.key,
             default: property.defaultKey,
             edit: $root.edit,
-            casePropertyTypeahead: suggestedProperties,
-            event: { change: function(){
-                    $element.value =  $element.value.replace(/ /g,'_');
-                return true;
-            }}
+            casePropertyTypeahead: suggestedProperties
         "/>
     </span>
     <span data-bind="visible: property.required()">

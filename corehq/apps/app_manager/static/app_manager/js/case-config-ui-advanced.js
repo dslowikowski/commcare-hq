@@ -774,10 +774,7 @@ var AdvancedCase = (function () {
             });
 
             self.suggestedProperties = ko.computed(function () {
-                return CC_UTILS.filteredSuggestedProperties(
-                    ActionBase.suggestedProperties(self, false),
-                    self.case_properties()
-                );
+                return ActionBase.suggestedProperties(self, false);
             });
 
             self.validate = ko.computed(function () {
@@ -933,12 +930,7 @@ var AdvancedCase = (function () {
                     }
                 },
                 // template: case-config:case-transaction:case-properties
-                suggestedSaveProperties: ko.computed(function () {
-                    return CC_UTILS.filteredSuggestedProperties(
-                        self.action.suggestedProperties(),
-                        self.action.case_properties()
-                    );
-                })
+                suggestedSaveProperties: self.action.suggestedProperties
             };
 
             self.defaultKey = ko.computed(function () {
@@ -982,12 +974,7 @@ var AdvancedCase = (function () {
                     }
                 },
                 // template: case-config:case-transaction:case-preload
-                suggestedPreloadProperties: ko.computed(function () {
-                    return CC_UTILS.filteredSuggestedProperties(
-                        self.action.suggestedProperties(),
-                        self.action.preload()
-                    );
-                })
+                suggestedPreloadProperties: self.action.suggestedProperties
             };
             self.defaultKey = ko.computed(function () {
                 return '';

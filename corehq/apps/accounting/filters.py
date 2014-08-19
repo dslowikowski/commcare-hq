@@ -92,18 +92,6 @@ class DoNotInvoiceFilter(BaseSingleOptionFilter):
     ]
 
 
-class TrialStatusFilter(BaseSingleOptionFilter):
-    slug = 'trial_status'
-    label = _("Trial Status")
-    default_text = _("Show All Subscriptions (including trials)")
-    TRIAL = "trial"
-    NON_TRIAL = "non_trial"
-    options = [
-        (TRIAL, _("Show Non-Trial Subscriptions")),
-        (NON_TRIAL, _("Show Only Trial Subscriptions")),
-    ]
-
-
 class IsHiddenFilter(BaseSingleOptionFilter):
     slug = 'is_hidden'
     label = _('Is Hidden')

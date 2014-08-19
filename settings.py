@@ -239,7 +239,6 @@ HQ_APPS = (
     'corehq.apps.registration',
     'corehq.apps.unicel',
     'corehq.apps.reports',
-    'corehq.apps.userreports',
     'corehq.apps.data_interfaces',
     'corehq.apps.export',
     'corehq.apps.builds',
@@ -452,16 +451,14 @@ SMS_GATEWAY_PARAMS = "user=my_username&password=my_password&id=%(phone_number)s&
 # celery
 BROKER_URL = 'django://'  # default django db based
 
-CELERY_MAIN_QUEUE = 'celery'
-
 # this is the default celery queue
 # for periodic tasks on a separate queue override this to something else
-CELERY_PERIODIC_QUEUE = CELERY_MAIN_QUEUE
+CELERY_PERIODIC_QUEUE = 'celery'
 
 # This is the celery queue to use for running reminder rules.
 # It's set to the main queue here and can be overridden to put it
 # on its own queue.
-CELERY_REMINDER_RULE_QUEUE = CELERY_MAIN_QUEUE
+CELERY_REMINDER_RULE_QUEUE = 'celery'
 
 SKIP_SOUTH_TESTS = True
 #AUTH_PROFILE_MODULE = 'users.HqUserProfile'
@@ -769,8 +766,6 @@ COMPRESS_PRECOMPILERS = (
    ('text/less', 'corehq.apps.style.precompilers.LessFilter'),
 )
 COMPRESS_ENABLED = True
-
-LESS_FOR_BOOTSTRAP_3_BINARY = '/opt/lessc/bin/lessc'
 
 # Invoicing
 INVOICE_STARTING_NUMBER = 0
@@ -1114,7 +1109,6 @@ COUCH_CACHE_BACKENDS = [
     'corehq.apps.cachehq.cachemodels.ReportGenerationCache',
     'corehq.apps.cachehq.cachemodels.DefaultConsumptionGenerationCache',
     'corehq.apps.cachehq.cachemodels.LocationGenerationCache',
-    'corehq.apps.cachehq.cachemodels.DomainInvitationGenerationCache',
     'dimagi.utils.couch.cache.cache_core.gen.GlobalCache',
 ]
 

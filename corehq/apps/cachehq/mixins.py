@@ -15,12 +15,6 @@ class CachedCouchDocumentMixin(object):
         super(CachedCouchDocumentMixin, self).save(**params)
         invalidate_document(self)
 
-    @classmethod
-    def save_docs(cls, docs, use_uuids=True, all_or_nothing=False):
-        super(CachedCouchDocumentMixin, cls).save_docs(docs, use_uuids, all_or_nothing)
-        for doc in docs:
-            invalidate_document(doc)
-
     def delete(self):
         id = self._id
         try:

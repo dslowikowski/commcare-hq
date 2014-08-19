@@ -67,12 +67,6 @@ ACCOUNTING_PREVIEW = StaticToggle(
     [NAMESPACE_DOMAIN, NAMESPACE_USER]
 )
 
-BOOTSTRAP3_PREVIEW = StaticToggle(
-    'bootstrap3_preview',
-    'Bootstrap 3 Preview',
-    [NAMESPACE_USER]
-)
-
 INVOICE_TRIGGER = StaticToggle(
     'invoice_trigger',
     'Accounting Trigger Invoices',

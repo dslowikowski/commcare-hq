@@ -1,3 +1,5 @@
+import os
+import tempfile
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseNotFound
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -25,10 +27,6 @@ import csv
 from dimagi.utils.couch.database import iter_docs
 import itertools
 import copy
-from couchexport.writers import Excel2007ExportWriter
-from StringIO import StringIO
-from couchexport.models import Format
-
 
 @domain_admin_required
 def default(request, domain):
@@ -308,8 +306,8 @@ class UploadProductView(BaseCommTrackManageView):
         if not upload:
             messages.error(request, _('no file uploaded'))
             return self.get(request, *args, **kwargs)
-        elif not upload.name.endswith('.xlsx'):
-            messages.error(request, _('please use xlsx format only'))
+        elif not upload.name.endswith('.csv'):
+            messages.error(request, _('please use csv format only'))
             return self.get(request, *args, **kwargs)
 
         domain = args[0]
@@ -366,53 +364,45 @@ def download_products(request, domain):
     def _build_row(keys, product):
         row = []
         for key in keys:
-            row.append(product.get(key, '') or '')
+            row.append(product.get(key, ''))
 
         return row
 
-    file = StringIO()
-    writer = Excel2007ExportWriter()
+    fd, path = tempfile.mkstemp()
+    with os.fdopen(fd, 'wb') as file:
+        product_keys = [
+            'id',
+            'name',
+            'unit',
+            'product_id',
+            'description',
+            'category',
+            'program_id',
+            'cost',
+        ]
 
-    product_keys = [
-        'id',
-        'name',
-        'unit',
-        'product_id',
-        'description',
-        'category',
-        'program_id',
-        'cost',
-    ]
+        data_keys = set()
 
-    data_keys = set()
+        products = []
+        for product in _get_products(domain):
+            product_dict = product.to_dict()
 
-    products = []
-    for product in _get_products(domain):
-        product_dict = product.to_dict()
+            custom_properties = product.custom_property_dict()
+            data_keys.update(custom_properties.keys())
+            product_dict.update(custom_properties)
 
-        custom_properties = product.custom_property_dict()
-        data_keys.update(custom_properties.keys())
-        product_dict.update(custom_properties)
+            products.append(product_dict)
 
-        products.append(product_dict)
+        keys = product_keys + list(data_keys)
 
-    keys = product_keys + list(data_keys)
+        writer = csv.writer(file, dialect=csv.excel)
+        writer.writerow(keys)
 
-    writer.open(
-        header_table=[
-            ('products', [keys])
-        ],
-        file=file,
-    )
+        for product in products:
+            writer.writerow(_build_row(keys, product))
 
-    for product in products:
-        writer.write([('products', [_build_row(keys, product)])])
-
-    writer.close()
-
-    response = HttpResponse(mimetype=Format.from_format('xlsx').mimetype)
-    response['Content-Disposition'] = 'attachment; filename="products.xlsx"'
-    response.write(file.getvalue())
+    response = HttpResponse(open(path, 'rb').read())
+    response['Content-Disposition'] = 'attachment; filename="{domain}-products.csv"'.format(domain=domain)
     return response
 
 

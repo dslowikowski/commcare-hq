@@ -23,9 +23,6 @@ More in depth docs are available on [ReadTheDocs](http://commcare-hq.readthedocs
 + Over-the-air (ota) restore of user and cases
 + Integrated web and email reporting
 
-Contributing
-------------
-We welcome contributions, see our [CONTRIBUTING.rst](CONTRIBUTING.rst) document for more.
 
 Installing CommCare HQ
 ----------------------

@@ -26,7 +26,6 @@ from dimagi.utils.make_uuid import random_hex
 from dimagi.utils.modules import to_function
 from casexml.apps.case.models import CommCareCase
 from casexml.apps.phone.models import User as CaseXMLUser
-from corehq.apps.cachehq.mixins import CachedCouchDocumentMixin
 from corehq.apps.domain.shortcuts import create_user
 from corehq.apps.domain.utils import normalize_domain_name, domain_restricts_superusers
 from corehq.apps.domain.models import LicenseAgreement
@@ -2004,7 +2003,7 @@ class Invitation(Document):
         raise NotImplementedError
 
 
-class DomainInvitation(CachedCouchDocumentMixin, Invitation):
+class DomainInvitation(Invitation):
     """
     When we invite someone to a domain it gets stored here.
     """
@@ -2040,7 +2039,6 @@ class DomainInvitation(CachedCouchDocumentMixin, Invitation):
                         reduce=False,
                         key=[email],
                         include_docs=True,
-                        stale=settings.COUCH_STALE_QUERY,
                         ).all()
 
 class DomainRemovalRecord(DeleteRecord):

@@ -96,40 +96,23 @@ requires imports/proptable.html to be included in the main template
     });
 </script>
 <script type="text/javascript">
-    function submit_archive() {
-        document.getElementById('archive-form').submit();
-    }
-
-    function submit_restore() {
-        document.getElementById('unarchive-form').submit();
-    }
-
     function archive_form() {
         document.getElementById('archive-form-btn').disabled=true;
         document.getElementById('archive-spinner').style.display='inline-block';
-        {% if GOOGLE_ANALYTICS_ID %}
-            ga('send', 'event', 'Reports', 'Case History', 'Archive this form', {
-                'hitCallback': function () {
-                    submit_archive();
-                }
-            });
-        {% else %}
-            submit_archive();
-        {% endif %}
+        ga('send', 'event', 'Reports', 'Case History', 'Archive this form', {
+            'hitCallback': function () {
+                document.getElementById('archive-form').submit();
+            }
+        });
     }
-
     function restore_form() {
         document.getElementById('unarchive-form-btn').disabled=true;
         document.getElementById('unarchive-spinner').style.display='inline-block';
-        {% if GOOGLE_ANALYTICS_ID %}
-            ga('send', 'event', 'Reports', 'Case History', 'Restore this form', {
-                'hitCallback': function () {
-                    submit_restore();
-                }
-            });
-        {% else %}
-            submit_restore();
-        {% endif %}
+        ga('send', 'event', 'Reports', 'Case History', 'Restore this form', {
+            'hitCallback': function () {
+                document.getElementById('unarchive-form').submit();
+            }
+        });
     }
 </script>
 <style>

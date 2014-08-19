@@ -216,14 +216,6 @@ var CareplanConfig = (function () {
                         return p.indexOf('/') === -1;
                     });
                 }
-                properties.save = CC_UTILS.filteredSuggestedProperties(
-                    properties.save,
-                    self.case_properties()
-                );
-                properties.preload = CC_UTILS.filteredSuggestedProperties(
-                    properties.preload,
-                    self.case_preload()
-                );
                 return properties;
             });
 
