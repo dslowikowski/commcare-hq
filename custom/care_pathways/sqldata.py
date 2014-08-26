@@ -41,11 +41,12 @@ class CareQueryMeta(QueryMeta):
             if v and k not in ['group', 'gender', 'group_leadership', 'disaggregate_by', 'table_card_group_by']:
                 if isinstance(v, tuple):
                     if len(v) == 1:
-                        having.append("%s = \'%s\'" % (k, v[0]))
+                        print 123
+                        having.append("%s = :%s" % (k, k))
                     else:
-                        having.append("%s IN %s" % (k, tuple(["%s" % str(x) for x in v])))
+                        having.append("%s IN :%s" % (k, k))
                 else:
-                    having.append("%s = \'%s\'" % (k, v))
+                    having.append("%s = :%s" % (k, k))
                 if k not in external_cols:
                     filter_cols.append(k)
         group_having = ''
@@ -54,11 +55,11 @@ class CareQueryMeta(QueryMeta):
             group_having = "group_leadership=\'Y\'"
             having_group_by.append('group_leadership')
         elif 'group_leadership' in filter_values and filter_values['group_leadership']:
-            group_having = "(MAX(CAST(gender as int4)) + MIN(CAST(gender as int4))) = %s and group_leadership=\'Y\'" % filter_values['group_leadership']
+            group_having = "(MAX(CAST(gender as int4)) + MIN(CAST(gender as int4))) = :group_leadership and group_leadership=\'Y\'"
             having_group_by.append('group_leadership')
             filter_cols.append('group_leadership')
         elif 'gender' in filter_values and filter_values['gender']:
-            group_having = "(MAX(CAST(gender as int4)) + MIN(CAST(gender as int4))) = %s" % filter_values['gender']
+            group_having = "(MAX(CAST(gender as int4)) + MIN(CAST(gender as int4))) = :gender"
 
         for fil in self.filters:
             having.append("%s %s %s" % (fil.column_name, fil.operator, fil.parameter))
@@ -74,7 +75,7 @@ class CareQueryMeta(QueryMeta):
         return select(['COUNT(x.doc_id) as %s' % self.key] + self.group_by,
                group_by=['maxmin'] + filter_cols + self.group_by,
                having=" and ".join(having),
-               from_obj=join(s1, s2, s1.c.group_id==s2.c.group_id))
+               from_obj=join(s1, s2, s1.c.group_id==s2.c.group_id)).params(filter_values)
 
 
 class CareCustomColumn(CustomQueryColumn):
