@@ -26,7 +26,7 @@ from dimagi.utils.dates import DateSpan
 from dimagi.utils.decorators.memoized import memoized
 from dimagi.utils.web import json_request
 from sqlagg.base import AliasColumn
-from sqlagg.columns import SimpleColumn, SumColumn
+from sqlagg.columns import SimpleColumn, SumColumn, CountUniqueColumn
 
 from corehq.apps.es import cases as case_es, filters as es_filters
 from corehq.apps.reports.cache import request_cache
@@ -285,7 +285,7 @@ class OpmHealthStatusSqlData(SqlData):
 
         return [
             DatabaseColumn('# of Beneficiaries Registered',
-                SumColumn('beneficiaries_registered_total',
+                CountUniqueColumn('bank_account_number',
                     alias="beneficiaries",
                     filters=self.wrapped_sum_column_filters_extended),
                 format_fn=normal_format),
