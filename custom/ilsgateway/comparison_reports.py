@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.core.exceptions import MultipleObjectsReturned
 from corehq.apps.locations.models import SQLLocation
 from corehq.apps.products.models import SQLProduct
 from corehq.apps.reports.datatables import DataTablesHeader, DataTablesColumn
@@ -116,12 +115,12 @@ class WebUsersCompareReport(BaseComparisonReport):
             is_migrated = True
             try:
                 user = User.objects.get(username__in=[web_user.username, web_user.email.lower()])
-                if WebUser.get_by_username(user.username):
-                    webuser = WebUser.get_by_username(user.username)
+                webuser = WebUser.get_by_username(user.username)
+                if webuser:
                     is_migrated = self.domain in webuser.get_domains()
             except User.DoesNotExist:
                 is_migrated = False
-            except MultipleObjectsReturned:
+            except User.MultipleObjectsReturned:
                 pass
             finally:
                 rows.append([web_user.username, web_user.email,
