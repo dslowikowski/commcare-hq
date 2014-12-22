@@ -4,6 +4,7 @@ from corehq.apps.products.models import SQLProduct
 from corehq.apps.reports.datatables import DataTablesHeader, DataTablesColumn
 from corehq.apps.reports.generic import GenericTabularReport
 from corehq.apps.reports.standard import CustomProjectReport, ProjectReportParametersMixin
+from corehq.apps.users.models import WebUser
 from custom.ewsghana.api import GhanaEndpoint
 from custom.ewsghana.models import EWSGhanaConfig
 
@@ -116,9 +117,14 @@ class WebUsersCompareReport(BaseComparisonReport):
         for web_user in web_users:
             is_migrated = True
             try:
-                User.objects.get(username__in=[web_user.username, web_user.email.lower()])
+                user = User.objects.get(username__in=[web_user.username, web_user.email.lower()])
+                webuser = WebUser.get_by_username(user.username)
+                if webuser:
+                    is_migrated = self.domain in webuser.get_domains()
             except User.DoesNotExist:
                 is_migrated = False
+            except User.MultipleObjectsReturned:
+                pass
             finally:
                 rows.append([web_user.username, web_user.email,
                              web_user.date_joined, web_user.is_active, is_migrated])
